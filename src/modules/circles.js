@@ -4,22 +4,6 @@ export default class Particles {
     this.centerY = canvas.centerY;
     this.radius = canvas.maximumRadius;
     this.ctx = canvas.element.getContext("2d");
-    this.Circles = {
-      outer: {
-        cx: this.centerX,
-        cy: this.centerY,
-        start: 0,
-        r: 200,
-        end: this.toRadians(360),
-      },
-      inner: {
-        cx: this.centerX,
-        cy: this.centerY,
-        start: 0,
-        r: 100,
-        end: this.toRadians(360),
-      },
-    };
 
     this.arcArray = [
       {

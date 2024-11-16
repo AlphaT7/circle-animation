@@ -1,5 +1,6 @@
 export default class Particles {
   constructor({ canvas }) {
+    this.canvas = canvas.element;
     this.centerX = canvas.centerX;
     this.centerY = canvas.centerY;
     this.radius = canvas.maximumRadius;
@@ -9,17 +10,18 @@ export default class Particles {
         cx: this.centerX,
         cy: this.centerY,
         start: 0,
-        r: 200,
+        r: (canvas.element.width / 2) * 0.35,
         end: this.toRadians(360),
       },
       inner: {
         cx: this.centerX,
         cy: this.centerY,
         start: 0,
-        r: 100,
+        r: (canvas.element.width / 2) * 0.2,
         end: this.toRadians(360),
       },
     };
+    this.ratio = (this.canvas.width / 2) * 0.12;
     this.Particles = [];
     this.particleLines = [];
   }
@@ -36,14 +38,18 @@ export default class Particles {
     return { outerRing, innerRing };
   }
 
+  getRandomInt(max, min) {
+    return Math.random() * (max - min) + min;
+  }
+
   getRandomPointInRing(centerX, centerY, innerRadius, outerRadius) {
     for (let i = 0; i <= 360; i += 10) {
       let angle = this.toRadians(i);
-      let distance = Math.random() * (outerRadius - innerRadius) + innerRadius;
+      let distance = this.getRandomInt(outerRadius, innerRadius);
       let x = centerX + distance * Math.cos(angle);
       let y = centerY + distance * Math.sin(angle);
       let particle = new Path2D();
-      particle.arc(x, y, 2, 0, this.toRadians(360));
+      particle.arc(x, y, this.getRandomInt(0.5, 1.75), 0, this.toRadians(360));
       this.Particles.push({ x: x, y: y, particle: particle });
     }
   }
@@ -93,31 +99,37 @@ export default class Particles {
   update() {}
 
   findAdjacentParticles(selectedParticle) {
-    // return particles within 85px radius of the selectedParticle
+    // return particles within "this.ratio" radius of the selectedParticle
     return this.Particles.filter((particle) => {
       return (
-        Math.abs(particle.x - selectedParticle.x) < 85 &&
-        Math.abs(particle.y - selectedParticle.y) < 85
+        Math.abs(particle.x - selectedParticle.x) < this.ratio &&
+        Math.abs(particle.y - selectedParticle.y) < this.ratio
       );
     });
   }
 
   render(ctx) {
-    let outer = this.getCirclePath().outerRing;
+    // let outer = this.getCirclePath().outerRing;
     let inner = this.getCirclePath().innerRing;
-
-    ctx.stroke(outer);
+    ctx.lineWidth = 0.5;
+    // ctx.stroke(outer);
     ctx.stroke(inner);
 
-    this.Particles.forEach((obj) => {
-      ctx.fillStyle = "#fff";
-      ctx.fill(obj.particle);
-    });
+    for (let i = 0; i < 3; i++) {
+      this.Particles.forEach((obj) => {
+        ctx.shadowColor = "#fff";
+        ctx.shadowBlur = 5;
+        ctx.fillStyle = "#fff";
+        ctx.fill(obj.particle);
+      });
 
-    this.particleLines.forEach((obj) => {
-      ctx.strokeStyle = "#fff";
-      ctx.lineWidth = 0.1;
-      ctx.stroke(obj);
-    });
+      this.particleLines.forEach((obj) => {
+        ctx.shadowColor = "#fff";
+        ctx.shadowBlur = 5;
+        ctx.strokeStyle = "#fff";
+        ctx.lineWidth = this.getRandomInt(0.1, 0.2);
+        ctx.stroke(obj);
+      });
+    }
   }
 }

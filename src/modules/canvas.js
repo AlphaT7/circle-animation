@@ -1,6 +1,6 @@
 export default class Canvas {
-  constructor({ canvasName }) {
-    this.canvasName = canvasName;
+  constructor({ canvasId }) {
+    this.canvasId = canvasId;
   }
 
   create() {
@@ -11,10 +11,10 @@ export default class Canvas {
         : window.innerWidth;
 
     canvasObj.style.display = "block";
-    canvasObj.id = this.canvasName;
+    canvasObj.id = this.canvasId;
     document.body.append(canvasObj);
 
-    const element = document.getElementById(this.canvasName);
+    const element = document.getElementById(this.canvasId);
     element.width = ratio;
     element.height = ratio;
 
